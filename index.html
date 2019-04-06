@@ -10,9 +10,35 @@
     <link rel="icon" href="//g14n.info/favicon.ico" type="image/x-icon">
 
     <script src="libs/redux-v4.0.1.min.js"></script>
+
+    <script src="libs/load-html-v1.1.0.js"></script>
+
+    <script src="app-root.js"></script>
   </head>
   <body>
-    <script>console.log(Redux)</script>
+    <load-html src="app-root.html"></load-html>
 
+    <app-root></app-root>
+
+    <script>
+      window.addEventListener('load', function () {
+        loadHtml(function (nodes) {
+          nodes.forEach(node => {
+            if (node.getAttribute('error')) {
+              return
+            }
+
+            if (node.firstChild && node.firstChild.tagName == 'TEMPLATE') {
+              const templateNode = node.firstChild
+
+              const componentId = templateNode.id
+              const componentCreator = window[componentId]
+
+              customElements.define(componentId, componentCreator(templateNode))
+            }
+          })
+        })
+      })
+    </script>
   </body>
 </html>
